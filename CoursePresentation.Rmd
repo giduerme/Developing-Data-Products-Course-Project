@@ -1,0 +1,136 @@
+---
+title: "Coursera: Developing Data Products Course Project"
+author: "Gilbert Duerme"
+date: "August 16, 2019"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## A. Overview
+
+This course project was made in fulfillment of the course requirements in the Developing Data Products course under Coursera. The course assignment was to Write a shiny application with associated supporting documentation. The documentation should be thought of as whatever a user will need to get started using the created application.
+
+## B. Shiny Application 
+
+The shiny application done was a simple temperature converter in which the user can choose any options on how the value that he entered could be converted. The following conversions were made for this project:
+
+- Fahrenheit to Celsius
+- Fahrenheit to Kelvin
+- Celsius to Fahrenheit
+- Celsius to Kelvin
+- Kelvin to Fahrenheit
+- Kelvin to Celsius
+
+## C. Shiny: ui.R
+
+```{r, echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE}
+library(shiny)
+shinyUI(fluidPage(
+  titlePanel("Temperature Converter"),
+  sidebarLayout(
+    sidebarPanel(
+      fluidRow(
+        fluidRow(
+          
+          column(12, 
+                 textInput(inputId = 'temp', label = textOutput(''), 
+                           value = "", placeholder = "Enter the value"))
+        ),
+        
+        column(12,
+               radioButtons(inputId = "option", label = "Options:", choices = list("Fahrenheit to Celsius" = 1, "Fahrenheit to Kelvin" = 2, "Celsius to Fahrenheit" = 3, "Celsius to Kelvin" = 4, "Kelvin to Fahrenheit" = 5, "Kelvin to Celsius" = 6)))
+      ),
+      
+      actionButton("convert", label = "Convert")
+    ),
+    
+    mainPanel(
+      h2(textOutput("result"))
+    )
+  ))
+)
+```
+
+
+## C. Shiny: server.R
+
+```{r, echo = TRUE, warning = FALSE, message = FALSE, cache = TRUE}
+library(shiny)
+
+FahrenheitToCelsius <- function(Fahrenheit1) {
+  ((Fahrenheit1 - 32) * 5) / 9
+}
+
+FahrenheitToKelvin <- function(Fahrenheit2) {
+  (((Fahrenheit2 - 32) * 5) / 9) + 273.15
+}
+
+CelsiusToFahrenheit <- function(Celsius1) {
+  ((Celsius1 * 9) / 5) + 32
+}
+
+CelsiusToKelvin <- function(Celsius2) {
+  (Celsius2 + 273.15)
+}
+
+KelvinToFahrenheit <- function(Kelvin1) {
+  (((Kelvin1 - 273.15) * 9) / 5) + 32
+}
+
+KelvinToCelsius <- function(Kelvin2) {
+  (Kelvin2 - 273.15)
+}
+
+shinyServer(
+  function(input, output) {
+
+    
+    result <- eventReactive(input$convert, {
+      input$temperature
+      temp <- as.numeric(input$temp)
+      
+      if(input$option == 1){
+        fc <- FahrenheitToCelsius(temp)
+        paste(fc, ' degree Fahrenheit')
+      }
+      
+      else if (input$option == 2){
+        fk <- FahrenheitToKelvin(temp)
+        paste(fk, ' degree Kelvin')
+      }
+      
+      else if (input$option == 3){
+        cf <- CelsiusToFahrenheit(temp)
+        paste(cf, ' degree Fahrenheit')
+      }
+      
+      else if (input$option == 4){
+        ck <- CelsiusToKelvin(temp)
+        paste(ck, ' degree Kelvin')
+      }
+      
+      else if (input$option == 5){
+        kf <- KelvinToFahrenheit(temp)
+        paste(kf, ' degree Fahrenheit')
+      }
+      
+      else{
+        kc <- KelvinToCelsius(temp)
+        paste(kc, ' degree Celsius')
+      }
+    })
+    
+    output$result <- renderText({
+      result()
+    })
+  }
+)
+```
+
+## D. Actual link of the created shiny application
+
+The created shiny applicaiton can be viewed using this link: <https://github.com/giduerme/Developing-Data-Products-Course-Project>
+
